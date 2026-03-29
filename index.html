@@ -392,8 +392,7 @@ function buildCalendar(last, len, sexDates, offset) {
         <div class="cal-title">${monthName}</div>
         ${isEstimate?`<div class="cal-estimate">estimated projection</div>`:""}
       </div>
-      <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
-    </div>
+      <button class="cal-nav" onclick="changeMonth(1)" ${offset>=6?"disabled":""}>&#8250;</button>
     <div class="cal-grid">${cells}</div>
     <div class="cal-hint">Tap any date to log a period or intimacy</div>
     <div class="cal-legend">
@@ -407,7 +406,7 @@ function buildCalendar(last, len, sexDates, offset) {
 }
 
 function changeMonth(dir) {
-  monthOffset = Math.max(0, monthOffset+dir);
+  monthOffset = Math.max(0, Math.min(6, monthOffset+dir));
   if (calState) document.getElementById("calContainer").innerHTML = buildCalendar(calState.last, calState.len, calState.sexDates, monthOffset);
 }
 
