@@ -198,9 +198,9 @@ function getBestDays(day, len) {
   const out = [];
   for (let o=0; o<=len && out.length<3; o++) {
     const d = ((day-1+o)%len)+1, pct = d/len;
-    if (pct>0.18 && pct<=0.57) {
+    if (pct>0.46 && pct<=0.57) {
       const dt = new Date(); dt.setDate(dt.getDate()+o);
-      out.push({ daysFrom:o, label:pct>0.46?"Peak":"Rising", dt });
+      out.push({ daysFrom:o, label:"Peak", dt });
     }
   }
   return out;
@@ -433,7 +433,7 @@ function render(dates, sexDates) {
   }
 
   const chipsHtml = !onPeriod && !isOverdue ? `<div class="best-card fadein">
-    <div class="best-title">✦ Best days to initiate ✦</div>
+    <div class="best-title">✦ Peak days to initiate ✦</div>
     <div class="day-chips">${best.map(({daysFrom, label, dt}) => {
       const isPeak = label==="Peak", ac = isPeak?"#D85A30":"#1D9E75";
       return `<div class="chip" style="border:1px solid ${ac}${daysFrom===0?"":"55"};background:${daysFrom===0?ac+"18":"#fafaf8"}">
