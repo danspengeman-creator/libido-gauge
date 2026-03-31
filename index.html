@@ -58,8 +58,6 @@
   .chip-month { font-size: 11px; color: #888; margin-bottom: 6px; }
   .chip-label { font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 20px; display: inline-block; }
   .chip-peak-dot { font-size: 10px; margin-top: 4px; animation: pulse 1.8s ease-in-out infinite; }
-
-  /* Calendar */
   .cal-wrap { background: #fff; border-radius: 16px; border: 1px solid #e5e5e5; padding: 1.25rem; margin-bottom: 1rem; }
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .cal-nav { background: none; border: 0.5px solid #ddd; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 18px; color: #666; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -69,7 +67,7 @@
   .cal-estimate { font-size: 10px; color: #aaa; margin-top: 2px; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .cal-dow { font-size: 11px; color: #aaa; text-align: center; padding-bottom: 6px; text-transform: uppercase; font-weight: 500; }
-  .cal-day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #1a1a1a; position: relative; cursor: pointer; transition: filter 0.15s; font-weight: 400; }
+  .cal-day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #1a1a1a; position: relative; cursor: pointer; transition: filter 0.15s; }
   .cal-day:active { filter: brightness(0.85); }
   @media (hover: hover) { .cal-day:hover { filter: brightness(0.9); } }
   .cal-day.today { font-weight: 700; outline: 2px solid #1a1a1a; outline-offset: -2px; }
@@ -83,7 +81,6 @@
   .cal-legend { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px; border-top: 0.5px solid #f0f0ee; }
   .cal-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #888; }
   .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-
   .footer { font-size: 11px; color: #bbb; text-align: center; margin-top: 1rem; }
   .footer a { color: #bbb; cursor: pointer; text-decoration: underline; }
   .loading { text-align: center; padding: 3rem 0; color: #888; font-size: 14px; }
@@ -104,15 +101,58 @@
   .modal-saving { font-size: 13px; color: #888; padding: 0.75rem 0; }
   .modal-success { font-size: 13px; color: #1D9E75; padding: 0.5rem 0; font-weight: 500; }
   .modal-error { font-size: 13px; color: #D85A30; padding: 0.5rem 0; }
+  /* PIN */
+  .pin-overlay { position: fixed; inset: 0; background: #f5f5f3; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
+  .pin-title { font-size: 22px; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+  .pin-sub { font-size: 13px; color: #888; margin-bottom: 2rem; }
+  .pin-dots { display: flex; gap: 16px; margin-bottom: 2rem; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; background: #e5e5e5; transition: background 0.15s; }
+  .pin-dot.filled { background: #1a1a1a; }
+  .pin-grid { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px; }
+  .pin-btn { width: 72px; height: 72px; border-radius: 50%; border: 0.5px solid #ddd; background: #fff; font-size: 22px; font-weight: 400; color: #1a1a1a; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+  .pin-btn:active { background: #f0f0ee; }
+  .pin-btn.del { font-size: 16px; color: #888; }
+  .pin-btn.empty { visibility: hidden; pointer-events: none; }
+  .pin-error { font-size: 13px; color: #D85A30; margin-top: 1rem; height: 20px; text-align: center; }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
   @keyframes fadeUp { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
   @keyframes bounceIn { from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1} }
   @keyframes ringPulse { 0%{box-shadow:0 0 0 0 rgba(255,255,255,0.4)}70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)} }
   @keyframes pulseOrb { 0%,100%{transform:scale(1)}50%{transform:scale(1.12)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
   .fadein { animation: fadeUp 0.5s ease both; }
 </style>
 </head>
 <body>
+
+<!-- PIN Screen -->
+<div id="pin-overlay" class="pin-overlay">
+  <div class="pin-title">Michelle Libido Gauge</div>
+  <div class="pin-sub">Enter your PIN to continue</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <div class="pin-btn empty"></div>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+</div>
+
+<!-- Main App -->
 <div id="app">
   <h1>Michelle Libido Gauge</h1>
   <div id="content">
@@ -121,10 +161,44 @@
     </div>
   </div>
 </div>
+
 <script>
+const CORRECT_PIN = "1540";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwunB6UogzPY_IfwJ-md7CDMMI7WKL-9hdAShF5nljc1ri_NKoN1C6uLmVK5A5SJSauLg/exec";
 const PERIOD_DATES_FB = ["2025-07-02","2025-07-30","2025-08-23","2025-09-20","2025-10-16","2025-11-10","2025-12-09","2026-01-02","2026-01-28","2026-02-23","2026-03-26"];
 const SEX_DATES_FB = ["2026-03-23"];
+
+// PIN logic
+let pinEntry = "";
+function pinPress(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  updatePinDots();
+  if (pinEntry.length === 4) {
+    if (pinEntry === CORRECT_PIN) {
+      sessionStorage.setItem("unlocked","1");
+      document.getElementById("pin-overlay").style.display = "none";
+      init();
+    } else {
+      const dots = document.getElementById("pin-dots");
+      dots.style.animation = "shake 0.4s ease";
+      document.getElementById("pin-error").textContent = "Incorrect PIN. Try again.";
+      setTimeout(() => { dots.style.animation = ""; pinEntry = ""; updatePinDots(); }, 400);
+    }
+  }
+}
+function pinDel() {
+  pinEntry = pinEntry.slice(0,-1);
+  updatePinDots();
+  document.getElementById("pin-error").textContent = "";
+}
+function updatePinDots() {
+  for (let i=0; i<4; i++) document.getElementById("d"+i).classList.toggle("filled", i < pinEntry.length);
+}
+if (sessionStorage.getItem("unlocked")==="1") {
+  document.getElementById("pin-overlay").style.display = "none";
+  init();
+}
 
 const PHASE_TIPS = {
   "Menstrual": [
@@ -435,13 +509,13 @@ function render(dates, sexDates) {
   const chipsHtml = !onPeriod && !isOverdue ? `<div class="best-card fadein">
     <div class="best-title">✦ Peak days to initiate ✦</div>
     <div class="day-chips">${best.map(({daysFrom, label, dt}) => {
-      const isPeak = label==="Peak", ac = isPeak?"#D85A30":"#1D9E75";
+      const ac = "#D85A30";
       return `<div class="chip" style="border:1px solid ${ac}${daysFrom===0?"":"55"};background:${daysFrom===0?ac+"18":"#fafaf8"}">
         <div class="chip-dow">${daysFrom===0?"Today":daysFrom===1?"Tomorrow":dt.toLocaleDateString("en-US",{weekday:"long"})}</div>
         <div class="chip-date" style="color:${ac}">${dt.getDate()}</div>
         <div class="chip-month">${dt.toLocaleDateString("en-US",{month:"short"})}</div>
         <div class="chip-label" style="background:${ac}18;color:${ac}">${label}</div>
-        ${isPeak?`<div class="chip-peak-dot" style="color:${ac}">●</div>`:""}
+        <div class="chip-peak-dot" style="color:${ac}">●</div>
       </div>`;
     }).join("")}</div>
   </div>` : "";
@@ -492,8 +566,6 @@ async function init() {
   const {dates, sexDates} = await fetchDates();
   render(dates, sexDates);
 }
-
-init();
 </script>
 </body>
 </html>
