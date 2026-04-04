@@ -100,12 +100,9 @@
   html.dark .cal-day.last-chance{background:#2a1f00;color:#f0b429;}
   .cal-hint{font-size:10px;color:var(--text3);text-align:center;margin-top:10px;margin-bottom:8px;}
   .cal-legend{display:flex;flex-wrap:wrap;gap:7px;margin-top:0.85rem;justify-content:center;}
-  .cal-legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);}
-  .cal-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
   .leg-chip{font-size:12px;font-weight:500;padding:5px 11px;border-radius:100px;cursor:pointer;user-select:none;transition:opacity 0.15s;}
   .leg-chip:active{opacity:0.7;}
   .feelings-card{background:var(--card-bg);border-radius:16px;border:1px solid var(--border);padding:1.25rem;margin-top:1rem;}
-  .feelings-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;text-align:center;}
   .feeling-day{margin-bottom:10px;}
   .feeling-day-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);margin-bottom:6px;}
   .feeling-pills{display:flex;flex-wrap:wrap;gap:6px;}
@@ -179,7 +176,7 @@
     <button class="pin-btn" onclick="pinPress('9')">9</button>
     <div class="pin-btn empty"></div>
     <button class="pin-btn" onclick="pinPress('0')">0</button>
-    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    <button class="pin-btn del" onclick="pinDel()">&#9003;</button>
   </div>
   <div class="pin-error" id="pin-error"></div>
 </div>
@@ -243,28 +240,22 @@ function avgLen(dates){if(dates.length<2)return 28;const s=dates.map(d=>parseISO
 function getBestDays(day,len){const out=[];for(let o=0;o<=len&&out.length<3;o++){const d=((day-1+o)%len)+1,pct=d/len;if(pct>0.46&&pct<=0.57){const dt=new Date();dt.setDate(dt.getDate()+o);out.push({daysFrom:o,dt});}}return out;}
 function getNextPeriod(day,len){const du=len-day+1,dt=new Date();dt.setDate(dt.getDate()+du);return{daysUntil:du,dateStr:dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})};}
 function classifyDay(d,len){if(d<=5)return"period";const p=d/len;if(p<=0.46)return"rising";if(p<=0.57)return"peak";if(p<=0.86)return"neutral";return"low";}
-function getCycleDay(calDay,month,year,last,len){const diff=Math.floor((new Date(year,month,calDay)-parseISOLocal(last))/86400000);return((diff%len)+len)%len+1;}
-function getDayType(calDay,month,year,last,len){return classifyDay(getCycleDay(calDay,month,year,last,len),len);}
 
 const PHASE_INFO = {
-  period:     { emoji:"🌙", name:"Period", days:"Days 1–5",     bg:"#E8D4EE", color:"#7B4F8E", how:"She's in her lowest energy phase. Hormones are at their minimum and she may feel crampy, tired, bloated or emotionally sensitive.", libido:"Her libido is essentially offline right now and any pressure to be intimate will likely land badly.", action:"Be her comfort. Handle things without being asked, bring warmth and food and ask nothing in return." },
-  follicular: { emoji:"🌸", name:"Follicular", days:"Days 6–12", bg:"#EEF3F8", color:"#7A99B8", how:"Estrogen is rising and she's starting to feel like herself again. Energy is returning, her mood is lifting and she's becoming more social and open.", libido:"Her libido is beginning to stir quietly. She's receptive to connection but not quite at peak drive yet.", action:"This is a great time for quality time, light flirting and making plans together." },
-  fertile:    { emoji:"🌿", name:"Fertile Window", days:"Days 10–12", bg:"#FDEAE0", color:"#D4845A", how:"Estrogen is climbing fast and she may feel more attractive, more talkative and more interested in closeness.", libido:"Desire is noticeably rising. Her body is naturally priming for connection in the window just before ovulation.", action:"Be attentive, plan something intentional and don't hesitate to be a little more forward than usual." },
-  ovulation:  { emoji:"✨", name:"Ovulation", days:"Days 13–15", bg:"#F7C5D2", color:"#E8678A", how:"Peak phase. Estrogen and testosterone are surging and she's at her most confident, magnetic and energetic.", libido:"Libido is at its highest point in the cycle. She's drawn toward intimacy naturally right now so boldness works in your favor.", action:"Plan something special, be present and take the lead. This is your best window of the entire cycle." },
-  luteal:     { emoji:"🍂", name:"Luteal", days:"Days 16–24",   bg:"#C8E6D4", color:"#5FA67A", how:"Progesterone has taken over and her energy is tapering. She may crave comfort, routine and quieter evenings.", libido:"Libido begins to decline during this phase. Grand gestures are less likely to land well.", action:"Acts of service matter more here. Check in on her, take things off her plate and keep the vibe calm and steady." },
-  pms:        { emoji:"🌧", name:"PMS", days:"Days 25–28",      bg:"#C8DDF0", color:"#5B8DB8", how:"Hormones are dropping sharply ahead of her period. She may feel irritable, anxious, bloated or emotionally raw.", libido:"Libido is very low and initiating is unlikely to go well right now.", action:"Be patient, predictable and low-maintenance. Avoid big conversations, reduce her stress and just be a steady presence." }
+  period:     { emoji:"🌙", name:"Period", days:"Days 1-5",      bg:"#E8D4EE", color:"#7B4F8E", how:"She's in her lowest energy phase. Hormones are at their minimum and she may feel crampy, tired, bloated or emotionally sensitive.", libido:"Her libido is essentially offline right now and any pressure to be intimate will likely land badly.", action:"Be her comfort. Handle things without being asked, bring warmth and food and ask nothing in return." },
+  follicular: { emoji:"🌸", name:"Follicular", days:"Days 6-12", bg:"#EEF3F8", color:"#7A99B8", how:"Estrogen is rising and she's starting to feel like herself again. Energy is returning, her mood is lifting and she's becoming more social and open.", libido:"Her libido is beginning to stir quietly. She's receptive to connection but not quite at peak drive yet.", action:"This is a great time for quality time, light flirting and making plans together." },
+  fertile:    { emoji:"🌿", name:"Fertile Window", days:"Days 10-12", bg:"#FDEAE0", color:"#D4845A", how:"Estrogen is climbing fast and she may feel more attractive, more talkative and more interested in closeness.", libido:"Desire is noticeably rising. Her body is naturally priming for connection in the window just before ovulation.", action:"Be attentive, plan something intentional and don't hesitate to be a little more forward than usual." },
+  ovulation:  { emoji:"✨", name:"Ovulation", days:"Days 13-15", bg:"#F7C5D2", color:"#E8678A", how:"Peak phase. Estrogen and testosterone are surging and she's at her most confident, magnetic and energetic.", libido:"Libido is at its highest point in the cycle. She's drawn toward intimacy naturally right now so boldness works in your favor.", action:"Plan something special, be present and take the lead. This is your best window of the entire cycle." },
+  luteal:     { emoji:"🍂", name:"Luteal", days:"Days 16-24",    bg:"#C8E6D4", color:"#5FA67A", how:"Progesterone has taken over and her energy is tapering. She may crave comfort, routine and quieter evenings.", libido:"Libido begins to decline during this phase. Grand gestures are less likely to land well.", action:"Acts of service matter more here. Check in on her, take things off her plate and keep the vibe calm and steady." },
+  pms:        { emoji:"🌧", name:"PMS", days:"Days 25-28",       bg:"#C8DDF0", color:"#5B8DB8", how:"Hormones are dropping sharply ahead of her period. She may feel irritable, anxious, bloated or emotionally raw.", libido:"Libido is very low and initiating is unlikely to go well right now.", action:"Be patient, predictable and low-maintenance. Avoid big conversations, reduce her stress and just be a steady presence." }
 };
 
 function openPhaseInfo(key) {
-  const p = PHASE_INFO[key];
-  if (!p) return;
-  const existing = document.getElementById("modal-overlay");
-  if (existing) existing.remove();
-  const o = document.createElement("div");
-  o.className = "modal-overlay";
-  o.id = "modal-overlay";
-  o.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:200;animation:fadeUp 0.2s ease";
-  o.innerHTML = `<div style="background:var(--card-bg);border-radius:20px;padding:1.5rem;width:min(340px,90vw);max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  const p = PHASE_INFO[key]; if(!p)return;
+  const ex=document.getElementById("modal-overlay"); if(ex)ex.remove();
+  const o=document.createElement("div"); o.className="modal-overlay"; o.id="modal-overlay";
+  o.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:200;animation:fadeUp 0.2s ease";
+  o.innerHTML=`<div style="background:var(--card-bg);border-radius:20px;padding:1.5rem;width:min(340px,90vw);max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
       <div style="width:44px;height:44px;border-radius:12px;background:${p.bg};display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">${p.emoji}</div>
       <div><div style="font-size:16px;font-weight:500;color:var(--text)">${p.name}</div><div style="font-size:12px;color:var(--text3);margin-top:1px">${p.days}</div></div>
@@ -283,33 +274,34 @@ function openPhaseInfo(key) {
     </div>
     <button onclick="document.getElementById('modal-overlay').remove()" style="width:100%;padding:12px;border-radius:12px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer">Close</button>
   </div>`;
-  o.addEventListener("click", e => { if (e.target === o) o.remove(); });
+  o.addEventListener("click",e=>{if(e.target===o)o.remove();});
   document.body.appendChild(o);
 }
+
 function fetchDates(){
   return new Promise(resolve=>{
-    const cb="cb_"+Date.now();
-    const s=document.createElement("script");
-    const t=setTimeout(()=>{cleanup();resolve({dates:PERIOD_DATES_FB,sexDates:SEX_DATES_FB,feelingsMap:{},symptomDates:[]});},8000);
+    const cb="cb_"+Date.now(), s=document.createElement("script");
+    const t=setTimeout(()=>{cleanup();resolve({dates:PERIOD_DATES_FB,sexDates:SEX_DATES_FB,signalDates:[],feelingsMap:{},symptomDates:[]});},8000);
     function cleanup(){delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);clearTimeout(t);}
     window[cb]=data=>{
       resolve({
         dates:Array.isArray(data.periodDates)&&data.periodDates.length?data.periodDates:PERIOD_DATES_FB,
         sexDates:Array.isArray(data.sexDates)?data.sexDates:SEX_DATES_FB,
+        signalDates:Array.isArray(data.signalDates)?data.signalDates:[],
         feelingsMap:data.feelingsMap||{},
         symptomDates:Array.isArray(data.symptomDates)?data.symptomDates:[]
       });
       cleanup();
     };
-    s.onerror=()=>{cleanup();resolve({dates:PERIOD_DATES_FB,sexDates:SEX_DATES_FB,feelingsMap:{},symptomDates:[]});};
+    s.onerror=()=>{cleanup();resolve({dates:PERIOD_DATES_FB,sexDates:SEX_DATES_FB,signalDates:[],feelingsMap:{},symptomDates:[]});};
     s.src=SCRIPT_URL+"?action=read&callback="+cb+"&t="+Date.now();
     document.head.appendChild(s);
   });
 }
+
 function logDate(type,isoDate){
   return new Promise((resolve,reject)=>{
-    const cb="log_"+Date.now();
-    const s=document.createElement("script");
+    const cb="log_"+Date.now(), s=document.createElement("script");
     const t=setTimeout(()=>{cleanup();reject(new Error("Timed out"));},8000);
     function cleanup(){delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);clearTimeout(t);}
     window[cb]=data=>{cleanup();if(data.ok||data.success)resolve(data);else reject(new Error(data.message||data.error));};
@@ -343,38 +335,42 @@ async function maybeNotify(phase,period,isOverdue,isLastChance,rawDays){
 // ── Particles ──────────────────────────────────────────────
 let particleCanvas,particleCtx,particleAnim,monthOffset=0,calState=null;
 function stopParticles(){if(particleAnim)cancelAnimationFrame(particleAnim);if(particleCtx&&particleCanvas)particleCtx.clearRect(0,0,particleCanvas.width,particleCanvas.height);}
-function startParticles(canvas,phase){stopParticles();particleCanvas=canvas;particleCtx=canvas.getContext("2d");canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;const pts=Array.from({length:phase.level===5?40:20},()=>({x:Math.random()*canvas.width,y:canvas.height+Math.random()*40,r:Math.random()*3+1,speed:Math.random()*0.8+0.3,opacity:Math.random()*0.5+0.2,drift:(Math.random()-0.5)*0.5}));function draw(){particleCtx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{particleCtx.beginPath();particleCtx.arc(p.x,p.y,p.r,0,Math.PI*2);particleCtx.fillStyle=phase.accent+Math.round(p.opacity*255).toString(16).padStart(2,"0");particleCtx.fill();p.y-=p.speed;p.x+=p.drift;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width;}});particleAnim=requestAnimationFrame(draw);}draw();}
+function startParticles(canvas,phase){
+  stopParticles();particleCanvas=canvas;particleCtx=canvas.getContext("2d");
+  canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;
+  const pts=Array.from({length:phase.level===5?40:20},()=>({x:Math.random()*canvas.width,y:canvas.height+Math.random()*40,r:Math.random()*3+1,speed:Math.random()*0.8+0.3,opacity:Math.random()*0.5+0.2,drift:(Math.random()-0.5)*0.5}));
+  function draw(){particleCtx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{particleCtx.beginPath();particleCtx.arc(p.x,p.y,p.r,0,Math.PI*2);particleCtx.fillStyle=phase.accent+Math.round(p.opacity*255).toString(16).padStart(2,"0");particleCtx.fill();p.y-=p.speed;p.x+=p.drift;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width;}});particleAnim=requestAnimationFrame(draw);}
+  draw();
+}
 
 // ── Modal ──────────────────────────────────────────────────
-function showModal(isoDate){const dt=parseISOLocal(isoDate);const ex=document.getElementById("modal-overlay");if(ex)ex.remove();const o=document.createElement("div");o.className="modal-overlay";o.id="modal-overlay";o.innerHTML=`<div class="modal"><div class="modal-date">${dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}</div><div class="modal-sub">What would you like to log?</div><div class="modal-btns" id="modal-btns"><button class="modal-btn period" onclick="handleLog('period','${isoDate}')">🌙 Period start</button><button class="modal-btn sex" onclick="handleLog('sex','${isoDate}')">😊 Intimacy</button><button class="modal-btn cancel" onclick="closeModal()">Cancel</button></div></div>`;o.addEventListener("click",e=>{if(e.target===o)closeModal();});document.body.appendChild(o);}
+function showModal(isoDate){
+  const dt=parseISOLocal(isoDate);const ex=document.getElementById("modal-overlay");if(ex)ex.remove();
+  const o=document.createElement("div");o.className="modal-overlay";o.id="modal-overlay";
+  o.innerHTML=`<div class="modal"><div class="modal-date">${dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}</div><div class="modal-sub">What would you like to log?</div><div class="modal-btns" id="modal-btns"><button class="modal-btn period" onclick="handleLog('period','${isoDate}')">🌙 Period start</button><button class="modal-btn sex" onclick="handleLog('sex','${isoDate}')">😊 Intimacy</button><button class="modal-btn cancel" onclick="closeModal()">Cancel</button></div></div>`;
+  o.addEventListener("click",e=>{if(e.target===o)closeModal();});document.body.appendChild(o);
+}
 function closeModal(){const el=document.getElementById("modal-overlay");if(el)el.remove();}
-async function handleLog(type,isoDate){const btns=document.getElementById("modal-btns");if(btns)btns.innerHTML=`<div class="modal-saving">Saving...</div>`;try{await logDate(type,isoDate);if(btns)btns.innerHTML=`<div class="modal-success">Saved! Refreshing...</div>`;setTimeout(()=>{closeModal();init();},2000);}catch(e){if(btns)btns.innerHTML=`<div class="modal-error">Could not save. Try again.</div><button class="modal-btn cancel" onclick="closeModal()">Close</button>`;}}
+async function handleLog(type,isoDate){
+  const btns=document.getElementById("modal-btns");if(btns)btns.innerHTML=`<div class="modal-saving">Saving...</div>`;
+  try{await logDate(type,isoDate);if(btns)btns.innerHTML=`<div class="modal-success">Saved! Refreshing...</div>`;setTimeout(()=>{closeModal();init();},2000);}
+  catch(e){if(btns)btns.innerHTML=`<div class="modal-error">Could not save. Try again.</div><button class="modal-btn cancel" onclick="closeModal()">Close</button>`;}
+}
 
 // ── Feelings card ──────────────────────────────────────────
 function buildFeelingsCard(feelingsMap){
   if(!feelingsMap||!Object.keys(feelingsMap).length)return"";
-  const today=new Date();today.setHours(0,0,0,0);
-  const entries=[];
+  const today=new Date();today.setHours(0,0,0,0);const entries=[];
   for(let i=0;i<4;i++){
     const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()-i);
     const iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
     const feelings=feelingsMap[iso];
-    if(feelings){
-      const label=i===0?"Today":i===1?"Yesterday":d.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"});
-      const tags=feelings.split(",").map(f=>f.trim()).filter(Boolean);
-      entries.push({label,tags});
-    }
+    if(feelings){const label=i===0?"Today":i===1?"Yesterday":d.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"});const tags=feelings.split(",").map(f=>f.trim()).filter(Boolean);entries.push({label,tags});}
   }
   if(!entries.length)return"";
-  const rows=entries.map(e=>{
-    const pills=e.tags.map(t=>`<span class="feeling-pill">${FEELING_EMOJIS[t]||"💭"} ${t}</span>`).join("");
-    return`<div class="feeling-day"><div class="feeling-day-label">${e.label}</div><div class="feeling-pills">${pills}</div></div>`;
-  }).join("");
-  return`<div class="feelings-card fadein">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <div style="width:36px;height:36px;border-radius:10px;background:#fff0f8;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📝</div>
-      <div><div style="font-size:14px;font-weight:500;color:var(--text)">Michelle's recent feelings</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Logged from her cycle app</div></div>
-    </div>${rows}</div>`;}
+  const rows=entries.map(e=>{const pills=e.tags.map(t=>`<span class="feeling-pill">${FEELING_EMOJIS[t]||"💭"} ${t}</span>`).join("");return`<div class="feeling-day"><div class="feeling-day-label">${e.label}</div><div class="feeling-pills">${pills}</div></div>`;}).join("");
+  return`<div class="feelings-card fadein"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:36px;height:36px;border-radius:10px;background:#fff0f8;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📝</div><div><div style="font-size:14px;font-weight:500;color:var(--text)">Michelle's recent feelings</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Logged from her cycle app</div></div></div>${rows}</div>`;
+}
 
 // ── Stats ──────────────────────────────────────────────────
 function buildStats(dates,sexDates,len){
@@ -383,31 +379,29 @@ function buildStats(dates,sexDates,len){
   let avgGap="—";if(sorted.length>=2){let t=0;for(let i=1;i<sorted.length;i++)t+=(sorted[i]-sorted[i-1])/86400000;avgGap=Math.round(t/(sorted.length-1))+"d";}
   let longestGap="—";if(sorted.length>=2){let max=0;for(let i=1;i<sorted.length;i++)max=Math.max(max,(sorted[i]-sorted[i-1])/86400000);longestGap=Math.round(max)+"d";}
   const phaseColors={"Menstrual":"#378ADD","Follicular":"#1D9E75","Ovulation":"#D85A30","Luteal":"#BA7517","Late Luteal":"#888780"};
-  const phaseCounts={};PHASES.forEach(p=>phaseCounts[p.name]=0);
-  const cycleDayCounts=Array(len).fill(0);
+  const phaseCounts={};PHASES.forEach(p=>phaseCounts[p.name]=0);const cycleDayCounts=Array(len).fill(0);
   if(sexDates.length&&dates.length){const last=dates[dates.length-1];sexDates.forEach(sd=>{const diff=Math.floor((parseISOLocal(sd)-parseISOLocal(last))/86400000);const adj=((diff%len)+len)%len+1;const ph=getPhase(adj,len);phaseCounts[ph.name]=(phaseCounts[ph.name]||0)+1;if(adj>=1&&adj<=len)cycleDayCounts[adj-1]++;});}
   const maxPhaseCount=Math.max(1,...Object.values(phaseCounts));
   const phaseBarHtml=PHASES.map(p=>{const pct=Math.round((phaseCounts[p.name]/maxPhaseCount)*100);const col=phaseColors[p.name];const sn=p.name==="Late Luteal"?"Late Lut.":p.name;return`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div style="font-size:11px;font-weight:500;color:${col}">${phaseCounts[p.name]}</div><div style="width:100%;height:48px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;border-radius:4px 4px 0 0;background:${col};height:${Math.max(pct,phaseCounts[p.name]>0?8:0)}%;opacity:0.85"></div></div><div style="font-size:9px;color:var(--text3);text-align:center;line-height:1.2">${sn}</div></div>`;}).join("");
   const maxDayCount=Math.max(1,...cycleDayCounts);
   const heatmapHtml=cycleDayCounts.map((count,i)=>{const d=i+1;const ph=getPhase(d,len);const col=phaseColors[ph.name];const opacity=count>0?0.25+(count/maxDayCount)*0.75:0.08;return`<div title="Day ${d}: ${count} time${count!==1?"s":""}" style="flex:1;aspect-ratio:1;border-radius:3px;background:${col};opacity:${opacity};min-width:0"></div>`;}).join("");
-  return`<div class="stats-card fadein"><div class="stats-title">Stats</div><div class="stats-grid"><div class="stat"><div class="stat-val">${totalCycles}</div><div class="stat-lbl">Cycles logged</div></div><div class="stat"><div class="stat-val">${avgGap}</div><div class="stat-lbl">Avg intimacy gap</div></div><div class="stat"><div class="stat-val">${longestGap}</div><div class="stat-lbl">Longest gap</div></div></div>${sexDates.length>0?`<div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Intimacy by phase</div><div style="display:flex;gap:4px;align-items:flex-end">${phaseBarHtml}</div></div><div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Intimacy by cycle day</div><div style="display:flex;gap:2px">${heatmapHtml}</div><div style="display:flex;justify-content:space-between;margin-top:4px"><div style="font-size:9px;color:var(--text3)">Day 1</div><div style="font-size:9px;color:var(--text3)">Day ${len}</div></div></div>`:""}</div>`;}
+  return`<div class="stats-card fadein"><div class="stats-title">Stats</div><div class="stats-grid"><div class="stat"><div class="stat-val">${totalCycles}</div><div class="stat-lbl">Cycles logged</div></div><div class="stat"><div class="stat-val">${avgGap}</div><div class="stat-lbl">Avg intimacy gap</div></div><div class="stat"><div class="stat-val">${longestGap}</div><div class="stat-lbl">Longest gap</div></div></div>${sexDates.length>0?`<div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Intimacy by phase</div><div style="display:flex;gap:4px;align-items:flex-end">${phaseBarHtml}</div></div><div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Intimacy by cycle day</div><div style="display:flex;gap:2px">${heatmapHtml}</div><div style="display:flex;justify-content:space-between;margin-top:4px"><div style="font-size:9px;color:var(--text3)">Day 1</div><div style="font-size:9px;color:var(--text3)">Day ${len}</div></div></div>`:""}</div>`;
+}
 
 // ── Calendar ───────────────────────────────────────────────
-function buildCalendar(last,len,sexDates,offset){
-  const now=new Date();const tgt=new Date(now.getFullYear(),now.getMonth()+offset,1);
-  const year=tgt.getFullYear(),month=tgt.getMonth();const isEst=offset>0;
+function buildCalendar(last,len,sexDates,signalDates,offset){
+  const now=new Date(),tgt=new Date(now.getFullYear(),now.getMonth()+offset,1);
+  const year=tgt.getFullYear(),month=tgt.getMonth(),isEst=offset>0;
   const mName=tgt.toLocaleDateString("en-US",{month:"long",year:"numeric"});
   const firstDay=new Date(year,month,1).getDay(),dim=new Date(year,month+1,0).getDate();
-  const sexSet=new Set(sexDates);
-  const lastPeriod=parseISOLocal(last);
-  const ovDay=Math.round(len*PHASES[2].maxPct);
+  const sexSet=new Set(sexDates||[]),signalSet=new Set(signalDates||[]);
+  const lastPeriod=parseISOLocal(last),ovDay=Math.round(len*PHASES[2].maxPct);
 
-  function getDayClass(d,month,year){
+  function getDayClass(d){
     const dt=new Date(year,month,d);
     const daysSince=Math.floor((dt-lastPeriod)/86400000);
     const cycD=((daysSince%len)+len)%len+1;
-    const isLC=cycD===len;
-    if(isLC)return"last-chance";
+    if(cycD===len)return"last-chance";
     if(cycD<=5)return"period";
     if(cycD>=ovDay-2&&cycD<=ovDay)return"ovulation";
     if(cycD>=ovDay-5&&cycD<ovDay-2)return"fertile";
@@ -421,15 +415,17 @@ function buildCalendar(last,len,sexDates,offset){
   for(let i=0;i<firstDay;i++)cells+=`<div></div>`;
   for(let d=1;d<=dim;d++){
     const iso=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const isSex=sexSet.has(iso);
-    const pc=getDayClass(d,month,year);
-    const isToday=offset===0&&d===now.getDate();
-    const dt=new Date(year,month,d);
-    const daysSince=Math.floor((dt-lastPeriod)/86400000);
+    const isSex=sexSet.has(iso),isSignal=signalSet.has(iso);
+    const pc=getDayClass(d),isToday=offset===0&&d===now.getDate();
+    const daysSince=Math.floor((new Date(year,month,d)-lastPeriod)/86400000);
     const cycD=((daysSince%len)+len)%len+1;
-    let cls="cal-day"+(isSex?" sex":pc?" "+pc:"")+(isToday?" today":"");
-    let tip=isSex?"Intimacy recorded":pc==="last-chance"?"Last chance — period starts tomorrow":pc==="period"?"Period day "+cycD+" of 5":pc==="ovulation"?"Peak desire — ovulation window":pc==="fertile"?"Fertile window — desire rising":pc==="follicular"?"Follicular phase — energy returning":pc==="luteal"?"Luteal phase — winding down":"Late luteal / PMS phase";
-    cells+=`<div class="${cls}" onclick="showModal('${iso}')" title="${tip}">${d}${isSex?`<span style="font-size:8px;position:absolute;bottom:1px;right:2px">😊</span>`:""}</div>`;
+    const cls="cal-day"+(isSex?" sex":pc?" "+pc:"")+(isToday?" today":"");
+    const tipMap={"last-chance":"Last chance — period starts tomorrow","period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
+    const tip=isSex?"Intimacy recorded":(tipMap[pc]||"");
+    // 😊 bottom-left for intimacy, 💜 bottom-right for signal
+    const intimacyDot=isSex?`<span style="font-size:8px;position:absolute;bottom:1px;left:2px;line-height:1">😊</span>`:"";
+    const signalDot=isSignal?`<span style="font-size:8px;position:absolute;bottom:1px;right:2px;line-height:1">💜</span>`:"";
+    cells+=`<div class="${cls}" onclick="showModal('${iso}')" title="${tip}">${d}${intimacyDot}${signalDot}</div>`;
   }
   return`<div class="cal-wrap">
     <div class="cal-header">
@@ -451,19 +447,24 @@ function buildCalendar(last,len,sexDates,offset){
       <span class="leg-chip" onclick="openPhaseInfo('pms')"        style="background:#C8DDF0;color:#5B8DB8">🌧 PMS</span>
       <span class="leg-chip" style="background:#fff8e6;color:#8a6000;border:1px solid #f0b429;cursor:default">⏰ Last chance</span>
       <span class="leg-chip" style="background:#fff0f8;color:#cc6699;border:1px solid #e8a0cc;cursor:default">😊 Intimacy</span>
+      <span class="leg-chip" style="background:#f5f0ff;color:#7B4F8E;border:1px solid #c9aaee;cursor:default">💜 Signal</span>
     </div>
   </div>`;
 }
-function changeMonth(dir){monthOffset=Math.max(0,Math.min(6,monthOffset+dir));if(calState)document.getElementById("calContainer").innerHTML=buildCalendar(calState.last,calState.len,calState.sexDates,monthOffset);}
+function changeMonth(dir){
+  monthOffset=Math.max(0,Math.min(6,monthOffset+dir));
+  if(calState)document.getElementById("calContainer").innerHTML=buildCalendar(calState.last,calState.len,calState.sexDates,calState.signalDates,monthOffset);
+}
 
 // ── Render ─────────────────────────────────────────────────
-function render(dates,sexDates,feelingsMap){
+function render(dates,sexDates,feelingsMap,signalDates){
   monthOffset=0;
   const len=avgLen(dates),last=dates[dates.length-1],day=cycleDay(last,len),phase=getPhase(day,len);
   const best=getBestDays(day,len),next=best[0],soonHot=next&&next.daysFrom>0&&next.daysFrom<=3;
   const period=getNextPeriod(day,len),periodSoon=period.daysUntil<=4;
   const today=new Date();today.setHours(0,0,0,0);
   const safe=Array.isArray(sexDates)?sexDates:[];
+  const safeSignals=Array.isArray(signalDates)?signalDates:[];
   const lastSex=safe.length?parseISOLocal(safe[safe.length-1]):null;
   const daysSince=lastSex?Math.floor((today-lastSex)/86400000):999;
   const inCooldown=daysSince<3,showSmiley=daysSince<=2;
@@ -473,7 +474,7 @@ function render(dates,sexDates,feelingsMap){
   const recentOnHot=inCooldown&&phase.level>=3&&!onPeriod;
   const rawDays=Math.floor((today-parseISOLocal(last))/86400000)+1;
   const isLC=!onPeriod&&period.daysUntil===1,isOverdue=rawDays>len&&!onPeriod;
-  calState={last,len,sexDates:safe};
+  calState={last,len,sexDates:safe,signalDates:safeSignals};
 
   let banner="";
   if(isOverdue)banner=`<div class="hot-banner fadein" style="margin-bottom:1rem;background:linear-gradient(135deg,#888780,#5f5e5a)"><div class="banner-pulse"></div><div class="banner-icon">📋</div><div class="banner-title">Period log overdue</div><div class="banner-sub">It's been ${rawDays} days since her last period. Did she start? Tap the calendar to log it.</div></div>`;
@@ -484,7 +485,11 @@ function render(dates,sexDates,feelingsMap){
   else if(isLC)banner=`<div class="hot-banner fadein" style="margin-bottom:1rem;background:linear-gradient(135deg,#f0b429,#8a6000)"><div class="banner-pulse"></div><div class="banner-icon">⏰</div><div class="banner-title">Last chance tonight</div><div class="banner-sub">Her period starts tomorrow. Tonight is the last opportunity for a while.</div></div>`;
 
   let alerts="";
-  if(!onPeriod&&!isOverdue){  if(soonHot&&!isLC)alerts+=`<div class="alert alert-desire fadein"><div class="alert-dot" style="background:#D85A30"></div><p><strong>Heads up</strong> — a high-desire window is ${next.daysFrom===1?"tomorrow":"in "+next.daysFrom+" days"} (${next.dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}).</p></div>`;if(periodSoon&&!isLC)alerts+=`<div class="alert alert-period fadein"><div class="alert-dot" style="background:#5576D1"></div><p><strong>Period approaching</strong> — expected ${period.daysUntil===1?"tomorrow":"in "+period.daysUntil+" days"} (${period.dateStr}). Desire will be low.</p></div>`;if(!soonHot&&!periodSoon&&phase.level<=1)alerts+=`<div class="alert alert-period fadein"><div class="alert-dot" style="background:#888780"></div><p>Next period expected in <strong>${period.daysUntil} days</strong> (${period.dateStr}).</p></div>`;}
+  if(!onPeriod&&!isOverdue){
+    if(soonHot&&!isLC)alerts+=`<div class="alert alert-desire fadein"><div class="alert-dot" style="background:#D85A30"></div><p><strong>Heads up</strong> — a high-desire window is ${next.daysFrom===1?"tomorrow":"in "+next.daysFrom+" days"} (${next.dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}).</p></div>`;
+    if(periodSoon&&!isLC)alerts+=`<div class="alert alert-period fadein"><div class="alert-dot" style="background:#5576D1"></div><p><strong>Period approaching</strong> — expected ${period.daysUntil===1?"tomorrow":"in "+period.daysUntil+" days"} (${period.dateStr}). Desire will be low.</p></div>`;
+    if(!soonHot&&!periodSoon&&phase.level<=1)alerts+=`<div class="alert alert-period fadein"><div class="alert-dot" style="background:#888780"></div><p>Next period expected in <strong>${period.daysUntil} days</strong> (${period.dateStr}).</p></div>`;
+  }
 
   const chips=!onPeriod&&!isOverdue?`<div class="best-card fadein"><div class="best-title">✦ Peak days to initiate ✦</div><div class="day-chips">${best.map(({daysFrom,dt})=>{const ac="#D85A30";return`<div class="chip" style="border:1px solid ${ac}${daysFrom===0?"":"55"};background:${daysFrom===0?ac+"18":"var(--bg3)"}"><div class="chip-dow">${daysFrom===0?"Today":daysFrom===1?"Tomorrow":dt.toLocaleDateString("en-US",{weekday:"long"})}</div><div class="chip-date" style="color:${ac}">${dt.getDate()}</div><div class="chip-month">${dt.toLocaleDateString("en-US",{month:"short"})}</div><div class="chip-label" style="background:${ac}18;color:${ac}">Peak</div><div class="chip-peak-dot" style="color:${ac}">●</div></div>`;}).join("")}</div></div>`:"";
 
@@ -510,14 +515,17 @@ function render(dates,sexDates,feelingsMap){
         </div>
         ${alerts}${chips}
       </div>
-      <div class="desktop-right"><div id="calContainer">${buildCalendar(last,len,safe,0)}</div></div>
+      <div class="desktop-right"><div id="calContainer">${buildCalendar(last,len,safe,safeSignals,0)}</div></div>
     </div>
     <div class="footer">Avg cycle: ${len} days · <a onclick="init()">Refresh</a></div>
     ${buildFeelingsCard(feelingsMap||{})}
     ${buildStats(dates,safe,len)}
   </div>`;
 
-  setTimeout(()=>{const f=document.getElementById("gaugeFill");if(f)f.style.width=Math.max(8,((phase.level-1)/4)*100)+"%";if(phase.level>=3){const c=document.getElementById("pCanvas");if(c)startParticles(c,phase);}},100);
+  setTimeout(()=>{
+    const f=document.getElementById("gaugeFill");if(f)f.style.width=Math.max(8,((phase.level-1)/4)*100)+"%";
+    if(phase.level>=3){const c=document.getElementById("pCanvas");if(c)startParticles(c,phase);}
+  },100);
   maybeNotify(phase,period,isOverdue,isLC,rawDays);
 }
 
@@ -525,8 +533,8 @@ function render(dates,sexDates,feelingsMap){
 async function init(){
   stopParticles();
   document.getElementById("content").innerHTML=`<div class="loading">Reading cycle data...<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-  const{dates,sexDates,feelingsMap}=await fetchDates();
-  render(dates,sexDates,feelingsMap);
+  const{dates,sexDates,feelingsMap,signalDates}=await fetchDates();
+  render(dates,sexDates,feelingsMap,signalDates||[]);
 }
 
 if(sessionStorage.getItem("unlocked")==="1"){registerSW();init();}
