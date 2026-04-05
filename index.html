@@ -96,8 +96,6 @@
   .cal-day.pms{background:#C8DDF0;color:#5B8DB8;}
   .cal-day.sex{background:#fff0f8;border:1px solid #e8a0cc;}
   html.dark .cal-day.sex{background:#3a1a2a;border-color:#cc6699;}
-  .cal-day.last-chance{background:#fff8e6;color:#8a6000;border:2px solid #f0b429;font-weight:600;}
-  html.dark .cal-day.last-chance{background:#2a1f00;color:#f0b429;}
   .cal-hint{font-size:10px;color:var(--text3);text-align:center;margin-top:10px;margin-bottom:8px;}
   .cal-legend{display:flex;flex-wrap:wrap;gap:7px;margin-top:0.85rem;justify-content:center;}
   .leg-chip{font-size:12px;font-weight:500;padding:5px 11px;border-radius:100px;cursor:pointer;user-select:none;transition:opacity 0.15s;}
@@ -378,7 +376,7 @@ function buildStats(dates,sexDates,len){
   const sorted=[...sexDates].map(d=>parseISOLocal(d)).sort((a,b)=>a-b);
   let avgGap="—";if(sorted.length>=2){let t=0;for(let i=1;i<sorted.length;i++)t+=(sorted[i]-sorted[i-1])/86400000;avgGap=Math.round(t/(sorted.length-1))+"d";}
   let longestGap="—";if(sorted.length>=2){let max=0;for(let i=1;i<sorted.length;i++)max=Math.max(max,(sorted[i]-sorted[i-1])/86400000);longestGap=Math.round(max)+"d";}
-  const phaseColors={"Menstrual":"#378ADD","Follicular":"#1D9E75","Ovulation":"#D85A30","Luteal":"#BA7517","Late Luteal":"#888780"};
+  const phaseColors={"Menstrual":"#7B4F8E","Follicular":"#7A99B8","Ovulation":"#E8678A","Luteal":"#5FA67A","Late Luteal":"#5B8DB8"};
   const phaseCounts={};PHASES.forEach(p=>phaseCounts[p.name]=0);const cycleDayCounts=Array(len).fill(0);
   if(sexDates.length&&dates.length){const last=dates[dates.length-1];sexDates.forEach(sd=>{const diff=Math.floor((parseISOLocal(sd)-parseISOLocal(last))/86400000);const adj=((diff%len)+len)%len+1;const ph=getPhase(adj,len);phaseCounts[ph.name]=(phaseCounts[ph.name]||0)+1;if(adj>=1&&adj<=len)cycleDayCounts[adj-1]++;});}
   const maxPhaseCount=Math.max(1,...Object.values(phaseCounts));
@@ -401,7 +399,6 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
     const dt=new Date(year,month,d);
     const daysSince=Math.floor((dt-lastPeriod)/86400000);
     const cycD=((daysSince%len)+len)%len+1;
-    if(cycD===len)return"last-chance";
     if(cycD<=5)return"period";
     if(cycD>=ovDay-2&&cycD<=ovDay)return"ovulation";
     if(cycD>=ovDay-5&&cycD<ovDay-2)return"fertile";
@@ -420,7 +417,7 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
     const daysSince=Math.floor((new Date(year,month,d)-lastPeriod)/86400000);
     const cycD=((daysSince%len)+len)%len+1;
     const cls="cal-day"+(isSex?" sex":pc?" "+pc:"")+(isToday?" today":"");
-    const tipMap={"last-chance":"Last chance — period starts tomorrow","period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
+    const tipMap={"period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
     const tip=isSex?"Intimacy recorded":(tipMap[pc]||"");
     // 😊 bottom-left for intimacy, 💜 bottom-right for signal
     const intimacyDot=isSex?`<span style="font-size:8px;position:absolute;bottom:1px;left:2px;line-height:1">😊</span>`:"";
@@ -445,7 +442,6 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
       <span class="leg-chip" onclick="openPhaseInfo('ovulation')"  style="background:#F7C5D2;color:#E8678A">✨ Ovulation</span>
       <span class="leg-chip" onclick="openPhaseInfo('luteal')"     style="background:#C8E6D4;color:#5FA67A">🍂 Luteal</span>
       <span class="leg-chip" onclick="openPhaseInfo('pms')"        style="background:#C8DDF0;color:#5B8DB8">🌧 PMS</span>
-      <span class="leg-chip" style="background:#fff8e6;color:#8a6000;border:1px solid #f0b429;cursor:default">⏰ Last chance</span>
       <span class="leg-chip" style="background:#fff0f8;color:#cc6699;border:1px solid #e8a0cc;cursor:default">😊 Intimacy</span>
       <span class="leg-chip" style="background:#f5f0ff;color:#7B4F8E;border:1px solid #c9aaee;cursor:default">💜 Signal</span>
     </div>
