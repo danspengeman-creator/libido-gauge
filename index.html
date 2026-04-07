@@ -322,12 +322,11 @@ async function maybeNotify(phase,period,isOverdue,isLastChance,rawDays){
   let title="",message="";
   if(isOverdue){title="Period log overdue 📋";message="It's been "+rawDays+" days. Did her period start? Open the app to log it.";}
   else if(isLastChance){title="Last chance tonight ⏰";message="Her period starts tomorrow. Tonight is the last opportunity for a while.";}
+  else if(phase.name==="Ovulation"&&day===Math.round(len*PHASES[2].maxPct)-2){title="Ovulation window opens today 🌸";message="She's entering her 3-day peak desire window. This is the best time to initiate.";}
   else if(phase.level>=4){title="Tonight's the night 🔥";message="She's at peak desire today. The ovulation window is open.";}
   else if(phase.level===3&&period.daysUntil<=3){title="Period approaching 🌙";message="Her period is expected in "+period.daysUntil+" days. Desire will be dropping soon.";}
   if(!message)return;
-  const reg=await navigator.serviceWorker.ready;
-  const fire=new Date();fire.setHours(6,0,0,0);if(fire.getTime()<=Date.now())fire.setDate(fire.getDate()+1);
-  if(reg.active)reg.active.postMessage({type:"SCHEDULE",payload:{title,message,fireAt:fire.getTime()}});
+  new Notification(title,{body:message,icon:"/favicon.svg"});
 }
 
 // ── Particles ──────────────────────────────────────────────
