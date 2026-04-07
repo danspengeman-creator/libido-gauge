@@ -328,7 +328,7 @@ async function maybeNotify(phase,period,isOverdue,isLastChance,rawDays){
   if(!message)return;
   try {
     const reg=await navigator.serviceWorker.ready;
-    reg.showNotification(title,{body:message,icon:"/favicon.svg"});
+    reg.active.postMessage({type:"SCHEDULE",payload:{title,message,fireAt:Date.now()}});
   } catch(e) {
     new Notification(title,{body:message,icon:"/favicon.svg"});
   }
