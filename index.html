@@ -353,7 +353,7 @@ function startParticles(canvas,phase){
 function showModal(isoDate){
   const dt=parseISOLocal(isoDate);const ex=document.getElementById("modal-overlay");if(ex)ex.remove();
   const o=document.createElement("div");o.className="modal-overlay";o.id="modal-overlay";
-  o.innerHTML=`<div class="modal"><div class="modal-date">${dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}</div><div class="modal-sub">What would you like to log?</div><div class="modal-btns" id="modal-btns"><button class="modal-btn period" onclick="handleLog('period','${isoDate}')">🌙 Period start</button><button class="modal-btn sex" onclick="handleLog('sex','${isoDate}')">😊 Intimacy</button><button class="modal-btn cancel" onclick="closeModal()">Cancel</button></div></div>`;
+  o.innerHTML=`<div class="modal"><div class="modal-date">${dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}</div><div class="modal-sub">What would you like to log?</div><div class="modal-btns" id="modal-btns"><button class="modal-btn period" onclick="handleLog('period','${isoDate}')">🌙 Period start</button><button class="modal-btn sex" onclick="handleLog('sex','${isoDate}')">😏 Intimacy</button><button class="modal-btn cancel" onclick="closeModal()">Cancel</button></div></div>`;
   o.addEventListener("click",e=>{if(e.target===o)closeModal();});document.body.appendChild(o);
 }
 function closeModal(){const el=document.getElementById("modal-overlay");if(el)el.remove();}
@@ -427,10 +427,10 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
     const cls="cal-day"+(isSex?" sex":pc?" "+pc:"")+(isToday?" today":"");
     const tipMap={"period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
     const tip=isSex?"Intimacy recorded":(tipMap[pc]||"");
-    // 😊 bottom-left for intimacy, 💜 bottom-right for signal
-    const intimacyDot=isSex?`<span style="font-size:11px;position:absolute;bottom:3px;right:4px;line-height:1">😊</span>`:"";
+    // 😏 bottom-right for intimacy, 💜 bottom-left for signal
+    const intimacyDot=isSex?`<span style="font-size:11px;position:absolute;bottom:3px;right:4px;line-height:1">😏</span>`:"";
     const signalDot=isSignal?`<span style="font-size:11px;position:absolute;bottom:3px;left:4px;line-height:1">💜</span>`:"";
-    const singleIntimacy=isSex&&!isSignal?`<span style="font-size:11px;position:absolute;bottom:3px;right:4px;line-height:1">😊</span>`:"";
+    const singleIntimacy=isSex&&!isSignal?`<span style="font-size:11px;position:absolute;bottom:3px;right:4px;line-height:1">😏</span>`:"";
     const singleSignal=isSignal&&!isSex?`<span style="font-size:11px;position:absolute;bottom:3px;left:4px;line-height:1">💜</span>`:"";
     const emojiHtml=(isSex&&isSignal)?(intimacyDot+signalDot):isSex?singleIntimacy:isSignal?singleSignal:"";
     cells+=`<div class="${cls}" onclick="showModal('${iso}')" title="${tip}">${d}${emojiHtml}</div>`;
@@ -453,7 +453,7 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
       <span class="leg-chip" onclick="openPhaseInfo('ovulation')"  style="background:#F7C5D2;color:#E8678A">✨ Ovulation</span>
       <span class="leg-chip" onclick="openPhaseInfo('luteal')"     style="background:#C8E6D4;color:#5FA67A">🍂 Luteal</span>
       <span class="leg-chip" onclick="openPhaseInfo('pms')"        style="background:#C8DDF0;color:#5B8DB8">🌧 PMS</span>
-      <span class="leg-chip" style="background:#cc3366;color:#fff;cursor:default">😊 Intimacy</span>
+      <span class="leg-chip" style="background:#cc3366;color:#fff;cursor:default">😏 Intimacy</span>
       <span class="leg-chip" style="background:#f5f0ff;color:#7B4F8E;border:1px solid #c9aaee;cursor:default">💜 Signal</span>
     </div>
   </div>`;
@@ -467,7 +467,7 @@ function changeMonth(dir){
 function buildLastIntimacy(lastSexStr,showSmiley,daysSince){
   if(!lastSexStr)return"";
   const when=daysSince===0?" (today)":daysSince===1?" (yesterday)":" ("+daysSince+" days ago)";
-  return'<div class="alert fadein" style="background:#cc336618;border:1px solid #cc336644;margin-bottom:1rem"><div class="alert-dot" style="background:#cc3366"></div><p><strong>Last intimacy'+(showSmiley?' 😊':'')+':</strong> '+lastSexStr+when+'</p></div>';
+  return'<div class="alert fadein" style="background:#cc336618;border:1px solid #cc336644;margin-bottom:1rem"><div class="alert-dot" style="background:#cc3366"></div><p><strong>Last intimacy'+(showSmiley?' 😏':'')+':</strong> '+lastSexStr+when+'</p></div>';
 }
 
 // ── Render ─────────────────────────────────────────────────
