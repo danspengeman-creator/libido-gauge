@@ -428,9 +428,12 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
     const tipMap={"period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
     const tip=isSex?"Intimacy recorded":(tipMap[pc]||"");
     // 😊 bottom-left for intimacy, 💜 bottom-right for signal
-    const intimacyDot=isSex?`<span style="font-size:8px;position:absolute;bottom:1px;left:2px;line-height:1">😊</span>`:"";
-    const signalDot=isSignal?`<span style="font-size:8px;position:absolute;bottom:1px;right:2px;line-height:1">💜</span>`:"";
-    cells+=`<div class="${cls}" onclick="showModal('${iso}')" title="${tip}">${d}${intimacyDot}${signalDot}</div>`;
+    const intimacyDot=isSex?`<span style="font-size:11px;position:absolute;bottom:3px;left:50%;transform:translateX(-100%) translateX(-1px);line-height:1">😊</span>`:"";
+    const signalDot=isSignal?`<span style="font-size:11px;position:absolute;bottom:3px;left:50%;transform:translateX(1px);line-height:1">💜</span>`:"";
+    const singleIntimacy=isSex&&!isSignal?`<span style="font-size:11px;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);line-height:1">😊</span>`:"";
+    const singleSignal=isSignal&&!isSex?`<span style="font-size:11px;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);line-height:1">💜</span>`:"";
+    const emojiHtml=(isSex&&isSignal)?(intimacyDot+signalDot):isSex?singleIntimacy:isSignal?singleSignal:"";
+    cells+=`<div class="${cls}" onclick="showModal('${iso}')" title="${tip}">${d}${emojiHtml}</div>`;
   }
   return`<div class="cal-wrap">
     <div class="cal-header">
