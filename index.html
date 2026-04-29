@@ -402,12 +402,24 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
   const firstDay=new Date(year,month,1).getDay(),dim=new Date(year,month+1,0).getDate();
   const sexSet=new Set(sexDates||[]),signalSet=new Set(signalDates||[]);
   const lastPeriod=parseISOLocal(last),ovDay=Math.round(len*PHASES[2].maxPct);
+  // Compute the anchor date for projection: if overdue, next cycle starts at lastPeriod + len
+  const today=new Date();today.setHours(0,0,0,0);
+  const rawDaysSince=Math.floor((today-lastPeriod)/86400000);
+  const cyclesElapsed=Math.floor(rawDaysSince/len);
+  // Anchor is the start of the current projected cycle
+  const cycleAnchor=new Date(lastPeriod.getTime()+cyclesElapsed*len*86400000);
 
   function getDayClass(d){
     const dt=new Date(year,month,d);
-    const daysSince=Math.floor((dt-lastPeriod)/86400000);
-    // For current/future dates beyond cycle length, cap at len (stay in PMS) rather than wrapping
-    const cycD=daysSince>=0&&daysSince>=len?len:((daysSince%len)+len)%len+1;
+    const daysSince=Math.floor((dt-cycleAnchor)/86400000);
+    // For past dates before cycleAnchor, use the original lastPeriod modulo so history is correct
+    let cycD;
+    if(dt<cycleAnchor){
+      const ds=Math.floor((dt-lastPeriod)/86400000);
+      cycD=((ds%len)+len)%len+1;
+    } else {
+      cycD=(daysSince%len)+1;
+    }
     if(cycD<=5)return"period";
     if(cycD>=ovDay-2&&cycD<=ovDay)return"ovulation";
     if(cycD>=ovDay-5&&cycD<ovDay-2)return"fertile";
@@ -423,8 +435,8 @@ function buildCalendar(last,len,sexDates,signalDates,offset){
     const iso=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
     const isSex=sexSet.has(iso),isSignal=signalSet.has(iso);
     const pc=getDayClass(d),isToday=offset===0&&d===now.getDate();
-    const daysSince=Math.floor((new Date(year,month,d)-lastPeriod)/86400000);
-    const cycD=daysSince>=0&&daysSince>=len?len:((daysSince%len)+len)%len+1;
+    const daysSinceTip=Math.floor((new Date(year,month,d)-cycleAnchor)/86400000);
+    const cycD=new Date(year,month,d)<cycleAnchor?(((Math.floor((new Date(year,month,d)-lastPeriod)/86400000)%len)+len)%len+1):(daysSinceTip%len)+1;
     const cls="cal-day"+(isSex?" sex":pc?" "+pc:"")+(isToday?" today":"");
     const tipMap={"period":"Period day "+cycD+" of 5","ovulation":"Peak desire — ovulation window","fertile":"Fertile window — desire rising","follicular":"Follicular phase — energy returning","luteal":"Luteal phase — winding down","pms":"Late luteal / PMS phase"};
     const tip=isSex?"Intimacy recorded":(tipMap[pc]||"");
